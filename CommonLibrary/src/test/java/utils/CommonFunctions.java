@@ -66,41 +66,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class CommonFunctions {
-	public static String f_get_next_run_id(){
-		String s_query;
-		String s_current_id;
-		String s_next_id;
-		try{
-			s_query = "Select NEXT_ID from " + Global.DB_LOG_RUN_ID_TABLE_NAME;
-			s_current_id = f_get_sql_result(s_query);
-			s_next_id = Integer.toString(Integer.parseInt(s_current_id) +1);
-			s_query = "Update  " + Global.DB_LOG_RUN_ID_TABLE_NAME + " Set NEXT_ID ='" + s_next_id + "'";
-			f_insert_record_in_db(s_query);
-			f_write_logs("info","New Run ID generated and assigned to this execution. Run Id: " + s_next_id);
-			return s_next_id;
-		}catch(Exception e){
-			f_write_logs("warn","New Run ID not generated for this execution. This however will not halt the execution. Logs for this execution can be viewed locally. Err:" + CommonFunctions.f_err_string(e));
-			return "false";
-		}
-	}
-	public static String f_write_log_in_db_old(){
-		String s_query;
-		String s_current_id;
-		String s_next_id;
-		try{
-			s_query = "Select NEXT_ID from " + Global.DB_LOG_RUN_ID_TABLE_NAME;
-			System.out.println(Global.DB_LOG_RUN_ID_TABLE_NAME);
-			s_current_id = f_get_sql_result(s_query);
-			s_next_id = Integer.toString(Integer.parseInt(s_current_id) +1);
-			s_query = "Update  " + Global.DB_LOG_RUN_ID_TABLE_NAME + " Set NEXT_ID ='" + s_next_id + "'";
-			f_insert_record_in_db(s_query);
-			f_write_logs("info","New Run ID generated and assigned to this execution. Run Id: " + s_next_id);
-			return s_next_id;
-		}catch(Exception e){
-			f_write_logs("warn","New Run ID not generated for this execution. This however will not halt the execution. Logs for this execution can be viewed locally.");
-			return "false";
-		}
-	}
+
+
 	public static void f_write_logs(String s_message) {
 		BufferedWriter bw = null;
 		FileWriter fw = null;
@@ -124,156 +91,7 @@ public class CommonFunctions {
 			}
 		}
 	}
-	public static void f_write_logs(String s_log_level, String s_message ) {
-		String SCREEN_SHOT_FILE_PATH = null;
-		Global.TC_STEP_NAME = Thread.currentThread().getStackTrace()[2].getMethodName();
-		if(Global.CAPTURE_SCREEN_SHOT){
-			if (  (s_log_level.toUpperCase().equals("PASS")) ||  (s_log_level.toUpperCase().equals("FAIL")) ||  
-					(s_log_level.toUpperCase().equals("FAIL_NOT_EXIT")) ){
-				File o_dir = new File(Global.CONFIG_DATA.get("SCREEN_SHOT_ROOT_PATH") + Global.RUN_ID);
-				if(!(o_dir.exists())){
-					o_dir.mkdir();
-				}
-				if (  (Global.TC_STEP_NAME.contains("_mq_")) || (Global.TC_STEP_NAME.contains("_trigger_")) ) {
-					SCREEN_SHOT_FILE_PATH = "No Screen shot captured as it is not UI Step";
-				}else{
-					SCREEN_SHOT_FILE_PATH = Global.CONFIG_DATA.get("SCREEN_SHOT_ROOT_PATH") + Global.RUN_ID + "\\" + CommonFunctions.f_generate_time_based_unique_integer() + ".jpeg";
-					Screenshot o_scrn_shot = new Screenshot(SCREEN_SHOT_FILE_PATH);
-					o_scrn_shot.f_take_screen_shot();
-				}
-			}
-		}else{
-			if (  (s_log_level.toUpperCase().equals("PASS")) ||  (s_log_level.toUpperCase().equals("FAIL")) ||  
-					(s_log_level.toUpperCase().equals("FAIL_NOT_EXIT")) ){
-				SCREEN_SHOT_FILE_PATH = "No Screen shot captured as CAPTURE_SCREEN_SHOT is not marked as true in Config.xlsx file";
-			}
-		}
-		if (! (Global.SDS_ID==null)){
-			Global.SDS_ID = Global.SDS_ID.replace("'", "''"); 
-		}
-		if (Global.SDS_ID!=null){
-			if (!(Global.SDS_ID_MAP.containsValue(Global.SDS_ID))){
-				int i_sds_id_count = Global.SDS_ID_MAP.size();
-				Global.SDS_ID_MAP.put((i_sds_id_count+1), Global.SDS_ID);
-			}
-		}
-		if (Global.WF_ID!=null){
-			if (!((Global.WF_ID_MAP.containsValue(Global.WF_ID)))){
-				int i_wf_id_count = Global.WF_ID_MAP.size();
-				Global.WF_ID_MAP.put((i_wf_id_count+1), Global.WF_ID);
-			}
-		}
-		BufferedWriter bw = null;
-		FileWriter fw = null;
-		String s_message_db_log = s_message;
-		s_message_db_log = s_message_db_log.replace("'", "''");
-		s_message_db_log = s_message_db_log.replace(",", ",,");
-				s_message_db_log = s_message_db_log.replace("&", "&amp;");
-		Global.TC_STEP_ID = Global.TC_STEP_ID + 1;
-		String s_module_name = Global.MODULE_NAME;
-		String s_tc_name = Global.TC_NAME;
-		String s_tc_descp = Global.TC_DESCP;
-		String s_tc_pass_fail_status = Global.TC_PASS_FAIL_STATUS;
-		String s_tc_class_file_name = Global.CLASS_FILE_NAME;
-		String s_tc_step_name = Global.TC_STEP_NAME;
-		Global.TC_PASS_FAIL_STATUS = Global.TC_PASS_FAIL_STATUS + "~" + s_log_level;
-		String s_log_file_name = Global.LOG_FILE_NAME;
-		File o_dir_log = new File(System.getProperty("user.dir") + "\\logs\\");
-		if(!(o_dir_log.exists())){
-			o_dir_log.mkdir();
-		}
-		String s_log_file_path = System.getProperty("user.dir") + "\\logs\\" + s_log_file_name +".csv";
-		try {
-			String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-			s_message = timeStamp + "|" + s_log_level + "|" + s_module_name +"|" + s_tc_class_file_name + "|" +  s_tc_name +"|" + s_tc_descp 
-					+ "|" + s_tc_step_name + "|" + s_message.replace("\n", "") + "|" + SCREEN_SHOT_FILE_PATH + "|" + Global.TC_STEP_ID;
-			File f = new File(s_log_file_path);
-			if (f.exists()){
-				fw = new FileWriter(s_log_file_path, true);
-				bw = new BufferedWriter(fw);
-				bw.write(s_message.replace(",", " "));
-				bw.newLine();
-				if (Global.IS_DB_LOG_ENABLE){
-					String s_db_log_level;
-					String s_query = "";
-					String s_step_status = s_log_level;
-					if ((s_log_level.toUpperCase().contains("WARN")) || (s_log_level.toUpperCase().contains("PASS")) || (s_log_level.toUpperCase().contains("FAIL")) || (s_log_level.toUpperCase().contains("FAIL_NOT_EXIT"))){
-						s_db_log_level = "USER_LOG";
-					}else{
-						s_db_log_level = "FW_LOG";
-					}
-					if ((s_log_level.trim().toUpperCase().equals("PASS"))){
-						s_step_status = "True";
-					}else if (s_log_level.trim().toUpperCase().equals("PASS_NO_SS")){
-						s_step_status = "True";							
-					}else if (s_log_level.trim().toUpperCase().equals("FAIL_NO_SS")){
-						s_step_status = "False";						
-					}else if (s_log_level.trim().toUpperCase().equals("FAIL")){
-						s_step_status = "False";
-					}else if (s_log_level.trim().toUpperCase().equals("FAIL_NOT_EXIT")){
-						s_step_status = "False";
-					}else if (s_log_level.trim().toUpperCase().equals("FAIL_NOT_EXIT_NO_SS")){
-						s_step_status = "False";
-					}
-					try{
-						String s_db_values = null;
-						s_db_values = "'" + Global.SDS_RELEASE_ID + "','" + Global.HOST_NAME + "','" + 
-								System.getProperty("user.name") + "','" + Global.RUN_ID + "','" + Global.MODULE_NAME+"_"+s_tc_class_file_name + "','" + 
-								new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date())  + "','" + s_db_log_level + "','" +
-								Global.TC_NAME + "','" + Global.TC_STEP_ID + "','" + Global.TC_STEP_NAME + "','" +
-								s_step_status + "','" + s_message_db_log + "','" + SCREEN_SHOT_FILE_PATH + "','" + 
-								Global.SDS_ID + "','" + Global.ENV_NAME + "_" + Global.SDS_VERSION + "'";
-						s_query = "Insert into " + Global.DB_LOG_TC_LOG_TABLE_NAME + "(" + Global.DB_LOG_TC_LOG_CLM_NAMES + ") "
-								+ "values (" + s_db_values + ")";
-						if (Global.WRITE_LOG_IN_DB_BULK_INSERT_QUERY.equals("")){
-							Global.WRITE_LOG_IN_DB_BULK_INSERT_QUERY = s_query;
-						}else{
-							Global.WRITE_LOG_IN_DB_BULK_INSERT_QUERY = Global.WRITE_LOG_IN_DB_BULK_INSERT_QUERY 
-									+ "~~" + s_query ;
-						}
-					}catch(Exception enew){ 
-						f_write_logs("Warning. Error while Inserting log in to Db. Query: " + s_query + " Stack Trace: " + enew.getMessage());
-					}
-				}
-			}else{
-				fw = new FileWriter(s_log_file_path, true);
-				bw = new BufferedWriter(fw);
-				bw.write(Global.LOG_FILE_CLM_NAMES);
-				bw.newLine();
-			}
-			if ( (s_log_level.toUpperCase().equals("FAIL"))){
-				System.err.println(s_message + "\n");
-			}else if( (s_log_level.toUpperCase().equals("FAIL_NO_SS"))){
-				System.err.println(s_message + "\n");
-			}else if( (s_log_level.toUpperCase().equals("FAIL_NOT_EXIT"))){
-				System.err.println(s_message + "\n");
-			}else if( (s_log_level.toUpperCase().equals("FAIL_NOT_EXIT_NO_SS"))){
-				System.err.println(s_message + "\n");			
-			}else{
-				System.out.println(s_message + "\n");
-			}
-			if  (  (s_log_level.toUpperCase().equals("FAIL"))  || (s_log_level.toUpperCase().equals("FAIL_NO_SS"))  ){
-				CommonFunctions.f_write_logs("Due to failure in one of the step;"
-						+ "Breaking the current Test Case and passing control to next test case.");
-				throw new CancellationException();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (bw != null)
-					bw.close();
-				if (fw != null)
-					fw.close();
-				if ( (s_log_level.toUpperCase().equals("FAIL"))){
-					System.out.println("Cancellation exception thrown.");
-					throw new CancellationException();
-				}
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}
-	}
+
 	public static String f_generate_log_file_name(){
 		String result;
 		String y,mon,d,h,min,s,mil;
@@ -301,9 +119,9 @@ public class CommonFunctions {
 		String JDBC_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";  
 		if(  (s_query.toUpperCase().contains("TC_STATUS_SUMMARY")) || (s_query.toUpperCase().contains("TC_LOG_TABLE")) 
 				|| (s_query.toUpperCase().contains("AUTO_TC_RUN_ID")) ){
-			connectionUrl = Global.DB_REPORT_CONNECTION_STRING;
+			connectionUrl = "<ConnectionURL>";
 		}else{
-			connectionUrl = Global.SDS_DB_CONNECTION_STRING;  
+			connectionUrl = "<ConnectionURL>"
 		}
 		Connection conn = null;
 		Statement stmt = null;
@@ -326,43 +144,7 @@ public class CommonFunctions {
 			CommonFunctions.f_write_logs("fail. DB connection or sql generated error: " + e.getMessage() + s_query);
 		}
 	}
-	public static void f_write_log_in_db_multiple(String s_query){
-		String s_result;
-		String connectionUrl;
-		String JDBC_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";  
-		if(  (s_query.toUpperCase().contains("TC_STATUS_SUMMARY")) || (s_query.toUpperCase().contains("TC_LOG_TABLE")) 
-				|| (s_query.toUpperCase().contains("AUTO_TC_RUN_ID")) ){
-			connectionUrl = Global.DB_REPORT_CONNECTION_STRING;
-		}else{
-			connectionUrl = Global.SDS_DB_CONNECTION_STRING;  
-		}
-		Connection conn = null;
-		Statement stmt = null;
-		try{
-			Class.forName(JDBC_DRIVER);
-			conn = DriverManager.getConnection(connectionUrl);		      
-			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			conn.setAutoCommit(false);
-			String[] temp_query = s_query.split("~~");
-			for (int i =0;i<temp_query.length;i++){
-				stmt.addBatch(temp_query[i]);
-			}
-			stmt.executeBatch();
-			conn.commit();
-			conn.close();
-			conn = null;
-			stmt = null;
-		}catch(Exception e){
-			try {
-				conn.close();
-				conn = null;
-				stmt = null;
-			} catch (SQLException e1) {
-				CommonFunctions.f_write_logs("fail,Unable to close the Connection: " + e1.getMessage());
-			}
-			CommonFunctions.f_write_logs("fail. DB connection or sql generated error: " + e.getMessage() + s_query);
-		}
-	}
+
 	public static void f_read_config(){
 		String s_config_file_path;
 		XSSFSheet sourcesheet_user_details;
@@ -409,61 +191,7 @@ public class CommonFunctions {
 		e.printStackTrace(new PrintWriter(errors));
 		return " PrintStackTraceContent: " + errors.toString();
 	}
-	public static String f_enrich_input_string_and_save_in_global(String s_message, String s_to_be_replaced, String s_replaced_with){
-		String s_message_local = "";
-		try{
-			if (!(s_to_be_replaced.equalsIgnoreCase(""))){
-				if ( (s_replaced_with==null)  ){
-					CommonFunctions.f_write_logs("fail_not_exit","Replace with Argument is Null. Can not enrich. Argument passed: To be replaced: " + s_to_be_replaced + " with " + s_replaced_with );
-				}else{
-					s_message = s_message.replace(s_to_be_replaced,s_replaced_with);
-					CommonFunctions.f_write_logs("info","Enriched input data replaced: " + s_to_be_replaced + " with " + s_replaced_with );
-				}
-			}else{
-				if( s_message.contains("[WEB_SERVICE_URL_PUBLIC_USER]")){
-					String version = Global.CONFIG_DATA.get("WEB_SERVICE_VERSION");
-					String url = "http:
-					s_message = s_message.replace("[WEB_SERVICE_URL_PUBLIC_USER]", url );
-					Global.CONFIG_DATA.put("[WEB_SERVICE_URL_PUBLIC_USER]", url);
-					f_add_enriched_param_in_global("[WEB_SERVICE_URL_PUBLIC_USER]", url);
-					CommonFunctions.f_write_logs("info","Enriched input data replaced: " + "[WEB_SERVICE_URL_PUBLIC_USER]" + " with " + url );
-				}
-	
-			}
-			return s_message;
-		}catch(Exception e){
-			CommonFunctions.f_write_logs("fail_no_ss","Fail to enrich input string." + CommonFunctions.f_err_string(e));
-			return s_message;
-		}
-	}
-	public static void f_add_enriched_param_in_global(String s_param_name, String s_param_value){
-		if (Global.ENRICHED_PARAM.containsKey(s_param_name)){
-			int i_size = Global.ENRICHED_PARAM.get(s_param_name).size();
-			Global.ENRICHED_PARAM.get(s_param_name).add(s_param_value);
-			CommonFunctions.f_write_logs("info", "Param value Added in Enriched Param Field. param Name:  " + s_param_name + " Param Value: " + s_param_value + " Full value: " +  Global.ENRICHED_PARAM.toString() );
-		}
-		else
-		{
-			ArrayList al_temp = new ArrayList();
-			al_temp.add(0,s_param_value);
-			Global.ENRICHED_PARAM.put(s_param_name, al_temp);
-			CommonFunctions.f_write_logs("info", "Param created and Aded in Enriched Param Field. param Name:  " + s_param_name + " Param Value: " + s_param_value + " Full value: " +  Global.ENRICHED_PARAM.toString() );
-		}
-	}
-	public static String f_fetch_and_enrich_tc_data_file_content(String s_xml_param,int i_file_index){
-		String s_file_path = null;
-		try{
-			Map<String,Map<String,String>> o_temp =  CommonFunctions.f_parse_xml_return_hashmap(s_xml_param);
-			s_file_path = Global.PATH_TC_DATA_FILE + "\\"  + o_temp.get("DataFile").get("FileName").split("~")[i_file_index];
-			String s_file_content = CommonFunctions.f_read_text_file(s_file_path);
-			s_file_content = CommonFunctions.f_enrich_input_string_and_save_in_global(s_file_content, "", "");
-			CommonFunctions.f_write_logs("info", "File Successfully read and enriched and content returned from file path: " + s_file_path + " File Content: " + s_file_content );
-			return s_file_content;
-		}catch(Exception e){
-			CommonFunctions.f_write_logs("fail_no_ss", "Exception thrown while trying to read the file sent in Parameters: " + s_file_path + " Exception: " + CommonFunctions.f_err_string(e) );
-			return null;
-		}
-	}
+
 	public static String f_generate_random_alpa_numeric_string(int i_len_of_string){
 		String uuid = UUID.randomUUID().toString();
 		uuid = uuid.replace("-", "");
@@ -506,26 +234,7 @@ public class CommonFunctions {
 		String result = RandomStringUtils.randomAlphabetic(i_length);
 		return result;
 	}		  
-	public static String QueryManagerForDifferentSchema(String s_query){
-		String result_query;
-		if(  (s_query.toUpperCase().contains("TC_STATUS_SUMMARY")) || (s_query.toUpperCase().contains("TC_LOG_TABLE")) 
-				|| (s_query.toUpperCase().contains("AUTO_TC_RUN_ID")) ){
-			return s_query;
-		}
-		if (Global.CONFIG_DATA.get("DB_RE_ENGINEER").equalsIgnoreCase("true")){
-			s_query = s_query.replace("dbo", "");
-			String[] arr = s_query.split("_", 2);
-			s_query = arr[0] + "_SDS." + arr[1].replace("..", ".");
-			CommonFunctions.f_write_logs("info", "Query  replaced based on DB reenginner schema. New Query:  " + s_query);
-			return s_query;
-		}
-		if (Global.CONFIG_DATA.get("DB_QUERY_HAS_ENV").equalsIgnoreCase("false")){
-			s_query = s_query.replace(Global.ENV_NAME +"_", ""); 
-			CommonFunctions.f_write_logs("info", "Query  replaced. New Query:  " + s_query);
-			return s_query;
-		}
-		return s_query; 
-	}
+
 	public static  LinkedHashMap<Integer,LinkedHashMap<Integer,String>>  f_get_sql_result_map(String s_query){
 		String s_result;
 		String connectionUrl;
@@ -535,9 +244,9 @@ public class CommonFunctions {
 		String JDBC_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";  
 		if(  (s_query.toUpperCase().contains("TC_STATUS_SUMMARY")) || (s_query.toUpperCase().contains("TC_LOG_TABLE")) 
 				|| (s_query.toUpperCase().contains("AUTO_TC_RUN_ID")) ){
-			connectionUrl = Global.DB_REPORT_CONNECTION_STRING;
+			connectionUrl = "";
 		}else{
-			connectionUrl = Global.SDS_DB_CONNECTION_STRING;  
+			connectionUrl = "";  
 		}
 		Connection conn = null;
 		Statement stmt = null;
@@ -546,7 +255,7 @@ public class CommonFunctions {
 			Class.forName(JDBC_DRIVER);
 			conn = DriverManager.getConnection(connectionUrl);
 			stmt = conn.createStatement();  
-			s_query = QueryManagerForDifferentSchema(s_query);
+			
 			rs = stmt.executeQuery(s_query);
 			ResultSetMetaData rsmd = rs.getMetaData();
 			int i_clm_count = rsmd.getColumnCount();
@@ -1363,83 +1072,8 @@ public class CommonFunctions {
 			} 
 		} 
 	}
-	@SuppressWarnings("unused")
-	public static boolean f_usersetup_ismandatorycheck(String TeamID, String UserId, String IsCheckingMandatory, String businessArea) {
-		boolean isUpdated = false;
-		try{
-			String UserName = UserId.split(":")[0];
-			if(!TeamID.isEmpty()) {
-				String arrTeam = TeamID;
-				String[] TeamId = arrTeam.split(",");
-				for (String id: TeamId) {
-					String SelectQuery = "Select Id From " + Global.ENV_NAME + "_workflow..AnalystTeam Where TeamId = '" + id + "' and UserName = 'INTRANET\\" + UserName + "'";
-					String team_id = CommonFunctions.f_get_sql_result(SelectQuery);
-					String DescriptionQuery = "Select Description From " + Global.ENV_NAME + "_workflow..Team Where Id = '" + id + "'";
-					String TeamName = CommonFunctions.f_get_sql_result(DescriptionQuery);
-					if(team_id.equalsIgnoreCase("false_err")) {
-						String AnalystTeamTableQuery = "Insert " + Global.ENV_NAME + "_workflow..AnalystTeam (TeamId, UserId, UserName, Role) Values (" + id + ", 0," + "'INTRANET\\" + UserName + "', 'A')";
-						CommonFunctions.f_insert_record_in_db(AnalystTeamTableQuery);
-						CommonFunctions.f_write_logs("info", "Analyst Role ->" + TeamName + " -> having role Id '" + id + "' is assigned to the user '" + "INTRANET\\" + UserName + "'. Query used " + DescriptionQuery);
-						isUpdated = true;
-					} else {
-						CommonFunctions.f_write_logs("info", "User INTRANET\\" + UserName + " is already assigned with Analyst role -> " + TeamName + "having Role Id '" + id + "'. Query used -> " + DescriptionQuery);
-						isUpdated = true;
-					}
-				}
-			}
-			if(IsCheckingMandatory.equalsIgnoreCase("Y")){
-				String CheckingMandatoryQuery = "Update " + Global.ENV_NAME + "_workflow..UserDetails Set CheckingMandatory = 1 Where UserId = '" + "INTRANET\\" + UserName + "'";
-				ResultSet CheckingMandatoryResultSet = CommonFunctions.f_get_sql_recordset(CheckingMandatoryQuery);
-				CommonFunctions.f_write_logs("info", "CheckingMandatory flag is set to: " + IsCheckingMandatory + " user :  " + UserName + "  Query used -> " + CheckingMandatoryQuery );
-				isUpdated = true;
-			}
-			if(IsCheckingMandatory.equalsIgnoreCase("N")){
-				String CheckingMandatoryQuery = "Update " + Global.ENV_NAME + "_workflow..UserDetails Set CheckingMandatory = 0 Where UserId = '" + "INTRANET\\" + UserName + "'";
-				ResultSet CheckingMandatoryResultSet = CommonFunctions.f_get_sql_recordset(CheckingMandatoryQuery);
-				CommonFunctions.f_write_logs("info", "CheckingMandatory flag is set to: " + IsCheckingMandatory + " user :  " + UserName + "Query used -> " + CheckingMandatoryQuery );
-				isUpdated = true;
-			}
-			if(!businessArea.equals("")){
-				String businessAreaQuery = "Update " + Global.ENV_NAME + "_workflow..UserDetails Set BusinessArea = '" + businessArea + "' Where UserId = '" + "INTRANET\\" + UserName + "'";
-				ResultSet businessAreaResultSet = CommonFunctions.f_get_sql_recordset(businessAreaQuery);
-				CommonFunctions.f_write_logs("info", "Business Area is updated to: " + businessArea + " user :  " + UserName + "  Query used -> " + businessAreaQuery );
-				isUpdated = true;
-			}
-			return isUpdated;
-		}catch(Exception e){
-			CommonFunctions.f_write_logs("fail_not_exit", "Team set up not done due to run time exception. Exception: " + CommonFunctions.f_err_string(e));
-			return isUpdated;
-		}
-	}
-	public static boolean f_usersetup_delete_team(String TeamID, String UserId) {
-		boolean isUpdated = false;
-		try{
-			String UserName = UserId.split(":")[0];
-			if(!TeamID.isEmpty()) {
-				String arrTeam = TeamID;
-				String[] TeamId = arrTeam.split(",");
-				for (String id: TeamId) {
-					String SelectQuery = "Select Id From " + Global.ENV_NAME + "_workflow..AnalystTeam Where TeamId = '" + id + "' and UserName = 'INTRANET\\" + UserName + "'";
-					String team_id = f_get_sql_result(SelectQuery);
-					String DescriptionQuery = "Select Description From " + Global.ENV_NAME + "_workflow..Team Where Id = '" + id + "'";
-					String TeamName = f_get_sql_result(DescriptionQuery);
-					if(!team_id.equalsIgnoreCase("false_err")) {
-						String AnalystTeamTableQuery = "Delete From " + Global.ENV_NAME + "_workflow..AnalystTeam Where TeamId = " + id + " AND UserName = 'INTRANET\\" + UserName + "'";
-						f_update_record_in_db(AnalystTeamTableQuery);
-						f_write_logs("info", "Analyst Role ->" + TeamName + " -> having role Id '" + id + "' is deleted from the user '" + "INTRANET\\" + UserName + "'. Query used " + DescriptionQuery);
-						isUpdated = true;
-					} else {
-						f_write_logs("info", "User INTRANET\\" + UserName + " is not assigned with Analyst role -> " + TeamName + "having Role Id '" + id + "'. Query used -> " + DescriptionQuery);
-						isUpdated = true;
-					}
-				}
-			}
-			return isUpdated;
-		}catch(Exception e){
-			f_write_logs("fail_not_exit", "Team set up not done due to run time exception. Exception: " + CommonFunctions.f_err_string(e));
-			return isUpdated;
-		}
-	}
+
+
 	public static String ReplaceJSONSubStringBasedOnAttributeValue(String searchableString,String keyword,String searchString,String replacewith){
 		try{
 			Scanner scanner = new Scanner(searchableString);
