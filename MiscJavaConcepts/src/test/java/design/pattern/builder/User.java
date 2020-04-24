@@ -37,6 +37,7 @@ public class User {
 	public String toString() {
 		return "[" + firstname + "," + lastname + "," + address + "," + age + "," + mobile + "]";
 	}
+	
 	//Nested class
 	public static class UserBuilder{
 		private String firstname;
