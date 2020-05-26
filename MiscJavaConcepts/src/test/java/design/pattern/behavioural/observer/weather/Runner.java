@@ -1,6 +1,6 @@
 package design.pattern.behavioural.observer.weather;
 
-public class Runner {
+class Runner {
 
 	public static void main(String[] args) {
 

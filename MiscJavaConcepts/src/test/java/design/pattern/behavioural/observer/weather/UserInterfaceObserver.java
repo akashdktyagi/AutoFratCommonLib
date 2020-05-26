@@ -1,6 +1,6 @@
 package design.pattern.behavioural.observer.weather;
 
-public class UserInterfaceObserver implements IWeatherObserver {
+class UserInterfaceObserver implements IWeatherObserver {
 	private int temperature;
 	private int windSpeed;
 	private int pressure;

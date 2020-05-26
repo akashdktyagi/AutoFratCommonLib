@@ -1,8 +1,7 @@
 package design.pattern.behavioural.observer.weather;
 
 import java.util.ArrayList;
-
-public class WeatherStation implements IWeatherStation{
+class WeatherStation implements IWeatherStation{
 
 	private int temperature;
 	private int windSpeed;
