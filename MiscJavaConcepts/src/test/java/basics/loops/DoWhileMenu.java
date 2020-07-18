@@ -13,7 +13,7 @@ public class DoWhileMenu {
 			System.out.println(" 4. do-while");
 			System.out.println(" 5. for\n");
 			System.out.println("Choose one:");
-			choice = (char) System.in.read();
+			choice = (char) System.in.read();  
 		}
 		while( choice < '1' || choice > '5');
 		

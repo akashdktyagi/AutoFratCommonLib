@@ -2,6 +2,10 @@ package basics.controlstatements;
 
 class IfElse {
 
+
+
+	
+	/*
 	public static void main(String args[])
 	{
 		int month = 4; // April
@@ -26,4 +30,15 @@ class IfElse {
 		}
 		System.out.println("April is in the " + season + ".");
 	}
+	*/
 }
+
+
+
+/*
+ * int a = 0;
+int b = a++; // b = 0; a = 1
+
+a = 0;
+b = ++a: // b = 1; a = 1
+*/

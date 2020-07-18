@@ -1,17 +1,18 @@
 package basics.loops;
-class Nested
-{
+
+public class ForLoopNestedPaternPrinting {
+
 	public static void main(String args[])
 	{
-		int i, j;
-		for(i=0; i<10; i++)
+		int i,j;
+		for(i=0;i<=5;i++)
 		{
-			for(j=i; j<10; j++) {
+			for(j=0;j<=i;j++)
+			{
 				System.out.print("*");
 			}
-			
 			System.out.println();
+
 		}
 	}
 }
-
