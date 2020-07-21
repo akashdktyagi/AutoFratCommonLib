@@ -208,7 +208,7 @@ Why would you want to create an identical copy? Well, when I work on a new web p
 * configure my code editor
 
 ```
-git clone https://github.com/kenken64/NUSISS-DevOpsEng.git
+git clone https://github.com/akashdktyagi/temp-DevOpsEng.git
 ```
 
 # Determine A repo's status
@@ -310,7 +310,7 @@ Another example is if you have a project whose code is hosted on Github but depl
 * Associate the repo with your local project
 
 ```
-git remote add origin https://github.com/kenken64/example1.git
+git remote add origin https://github.com/akashdktyagi/example1.git
 ```
 
 ## Add and commit files to the Remote Repo
@@ -364,7 +364,7 @@ This concept of "forking" is also different from "cloning". When you clone a rep
 
 Forking is not done on the command line; there is no git fork command. Go ahead, try running the following command:
 
-<img style="float: center;" src="./git3.jpg">
+
 <br>
 
 ## Group By Commit Author
@@ -383,7 +383,7 @@ git shortlog -s -n
 Another way that we can display all of the commits by an author is to use the regular git log command but include the --author flag to filter the commits to the provided author.
 
 ```
-git log --author=kenken64
+git log --author=akashdktyagi
 ```
 
 ## Filter Commits By Search
