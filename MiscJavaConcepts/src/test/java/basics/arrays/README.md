@@ -12,8 +12,8 @@ have to use 100 different variables.
 ## Limitations of Arrays:
 1. Size is fixed i.e., once an array is created with some size it cannot be expanded or compressed i.e., arrays size in not flexible. <br>
 2. Some times we may waste the memory or sometimes we may need additional memory. <br>
-
-3. In arrays we can store only homogeneous data or elements. 4. There are very less built-in functionality in array.
+3. In arrays we can store only homogeneous data or elements. <br>
+4. There are very less built-in functionality in array.
 
 
 ## Note: 
@@ -35,7 +35,7 @@ type[] refvar = new type[size];
 ### General Syntax to store element into Array:
 refvar[index] = value;
 
-###Example:
+### Example:
 rv = new int [5];
 
 
@@ -45,4 +45,10 @@ rv = new int [5];
 
 
 
+### Array vs ArrayList in Java
+1. Array is a fixed length data structure whereas ArrayList is a variable length Collection class. 
+2. We cannot change length of array once created in Java but ArrayList can be changed.
+3. We cannot store primitives in ArrayList, it can only store objects. 
+4. But array can contain both primitives and objects in Java. 
+5. Since Java 5, primitives are automatically converted in objects which is known as auto-boxing.
 
