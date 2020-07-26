@@ -13,9 +13,9 @@ class A
 class B extends A
 {
 	B()
-	{
-		super();
-		//super(2);
+	{	
+		//super();
+		super(2);
 		System.out.println("Constructor of B class");
 	}
 }
@@ -36,6 +36,12 @@ public class SuperMain
 		System.out.println("Main Ends");
 	}
 }
+
+//Main Starts
+//Constructor of C class
+//Main Ends
+
+
 
 /*
 Output:

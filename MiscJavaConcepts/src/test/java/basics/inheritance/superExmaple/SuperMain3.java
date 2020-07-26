@@ -22,6 +22,7 @@ class O extends N
 {
 	O()
 	{
+		super();
 		System.out.println("From O()");
 	}
 }
