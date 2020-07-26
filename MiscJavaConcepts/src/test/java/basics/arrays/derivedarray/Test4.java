@@ -9,9 +9,10 @@ public class Test4
 		ref[2] = new String("Sachin");
 		ref[3] = new String("Bhushan");
 		ref[4] = new String("Iqbal");
+		
 		for(int i=0;i<ref.length;i++)
 		{
-			System.out.println(ref[i].toUpperCase());
+			System.out.println(ref[i].toLowerCase());
 		}
 	}
 }

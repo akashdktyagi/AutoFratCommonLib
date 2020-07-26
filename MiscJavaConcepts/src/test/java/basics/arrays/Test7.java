@@ -1,5 +1,7 @@
 package basics.arrays;
 //sort the elements of a given array in ascending order
+
+// to visualize go here: https://visualgo.net/bn/sorting
 public class Test7
 {
 	public static void main(String[] args)

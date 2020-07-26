@@ -1,4 +1,6 @@
 package basics.arrays;
+
+//data in array, iterting ==> Give us a Sum and average
 public class Test2
 {
 	public static void main(String[] args)
@@ -11,10 +13,14 @@ public class Test2
 		arr[4]=99;
 		arr[5]=99;
 		int total = 0;
+		
+		//total = arr[0] + arr[1] +arr[2] + arr[3] + arr[4] +arr[5];
+		
 		for(int i=0;i<arr.length;i++)
 		{
 			System.out.println("marks in subject number " +(i+1)+ "::" +arr[i]);
-			total=total+arr[i];
+			
+			total = total + arr[i];
 		}
 		System.out.println("----------------");
 		System.out.println("total marks secured ::" +total);

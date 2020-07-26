@@ -1,5 +1,5 @@
 package basics.arrays.derivedarray;
-public class Test3
+public class Test3 extends Object
 {
 	public static void main(String[] args)
 	{
@@ -11,7 +11,8 @@ public class Test3
 		ref[4] = new Employee(50,500000);
 		for(int i=0;i<ref.length;i++)
 		{
-			System.out.println(ref[i].empid + "::" + ref[i].salary);
+			//System.out.println(ref[i].empid + "::" + ref[i].salary);
+			System.out.println(ref[i]);
 		}
 	}
 }

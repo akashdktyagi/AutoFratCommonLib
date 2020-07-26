@@ -12,11 +12,14 @@ public class Test5
 		ref[2] = "EF";
 		ref[3] = "GH";
 		ref[4] = "IJ";
+		
 		for(int i=0;i<ref.length;i++)
 		{
 			ref[i]=ref[i].toUpperCase();
 		}
+		
 		Arrays.sort(ref);
+		
 		for(String s:ref)
 		{
 			System.out.println(s);
