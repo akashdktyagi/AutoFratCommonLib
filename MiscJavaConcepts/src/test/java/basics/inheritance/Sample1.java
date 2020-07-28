@@ -8,6 +8,12 @@ class Sample1
 }
 class Sample2 extends Sample1
 {
+	@Override
+	void test1()
+	{
+		System.out.println("Running in Sample 2");
+	}
+	
 	void test2()
 	{
 		System.out.println("Running Test2");
