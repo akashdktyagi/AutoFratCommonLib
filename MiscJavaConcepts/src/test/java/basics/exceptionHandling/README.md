@@ -6,5 +6,5 @@
 3. Error : Error is irrecoverable e.g. OutOfMemoryError, VirtualMachineError, AssertionError etc.
 
 <br>
-<img style="float: center;" src="./throwable-Exception.jpg">
+<img style="float: center;" src="./throwable-Exception.png">
 <br>
