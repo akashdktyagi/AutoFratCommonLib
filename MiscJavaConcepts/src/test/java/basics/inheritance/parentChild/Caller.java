@@ -6,7 +6,7 @@ public class Caller {
 
 		Object obj  = new ChildClass();
 		
-		obj.methodParent();
+		((ParentClass) obj).methodParent();
 		
 	}
 

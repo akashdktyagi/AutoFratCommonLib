@@ -13,6 +13,12 @@ class Demo extends Sample// sub class Demo should implement all the methods of a
 	{
 		System.out.println("Test1() overridden in demo class");
 	}
+
+	@Override
+	void test2() {
+		// TODO Auto-generated method stub
+		
+	}
 }
 //void test2() is not inherited and implemented, so CTE. 
 public class Test4
