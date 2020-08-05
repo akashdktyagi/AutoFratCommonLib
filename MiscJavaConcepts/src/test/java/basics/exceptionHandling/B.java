@@ -3,7 +3,8 @@ public class B
 {
 	public static void main(String[] args)
 	{
-		int a1=10/0;
+		//int a1=10/0;
+		
 		try
 		{
 			int a=10/0;

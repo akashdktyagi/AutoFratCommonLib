@@ -2,7 +2,8 @@ package basics.exceptionHandling;
 //Example: Throws and throw
 class TestExceptionPropagation2{  
 	void m(){  
-		throw new java.io.IOException("device error");//checked exception  
+		//UNCOMMENT BELOW LINE WHILE EXPLANATION
+		//throw new java.io.IOException("device error");//checked exception  
 	}  
 	void n(){  
 		m();  
